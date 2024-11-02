@@ -12,7 +12,9 @@ export function Otp({ number }) {
         {Array(number).fill(1).map((x, index) => <SubOtpBox reference={(e) => ref.current[index] = e} key={index} onDone={() => {
             console.log(ref)
             console.log(index)
+
             if (index + 1 >= number) {
+                setDisabled(false);
                 return
             }
             ref.current[index + 1].focus();
@@ -32,21 +34,19 @@ function SubOtpBox({
     reference, onDone, goBack
 }) {
     const [inputBoxVal, setInputBoxVal] = useState("");
-
+    const validInputs=[0,1,2,3,4,5,6,7,8,9];
     return <div>
         <input value={inputBoxVal} ref={reference} onKeyUp={(e) => {
+            console.log("ASCII"+e.key);
             if (e.key == "Backspace") {
                 goBack()
+                setInputBoxVal("");
             }
-        }} onChange={(e) => {
-            const val = e.target.value
-
-            if (val == "1" || val == "2" || val == "3" || val == "4" || val == "5" || val == "6" || val == "7" || val == "8" || val  == "9") {
-                setInputBoxVal(val);
+            else if(validInputs.includes(Number(e.key))){
+                console.log('hi')
+                setInputBoxVal(e.key);
                 onDone()
-            } else {
-
             }
-        }} type="text" className="m-1 w-[40px] h-[50px] rounded-xl bg-blue-500 outline-none px-4 text-white"></input>
+        }}  type="text" className="m-1 w-[40px] h-[50px] rounded-xl bg-blue-500 outline-none px-4 text-white"></input>
     </div>
 }
