@@ -1,52 +1,81 @@
+import React, { useRef, useState } from "react";
 import { Button } from "./Buttons";
-import { useRef, useState } from "react";
 
-// 1, 2, 3, 6, 10
-export function Otp({ number }) {
-    const ref = useRef(Array(number).fill(0));
+const Otp = ({ number }) => {
+  const inputsRef = useRef([]);
+  const [disable, setDisable] = useState(false);
+  const [inputValue, setInputValue] = useState(Array(number).fill(""));
+  const handleChange = (e, index) => {
+    const { value } = e.target;
 
-    const [disabled, setDisabled] = useState(true);
+    if (!/^[0-9]$/.test(value) && value) {
+      return;
+    }
+    const newValue = [...inputValue];
+    newValue[index] = value;
+    setInputValue(newValue);
+    if (value && index < number - 1) {
+      inputsRef.current[index + 1].focus();
+    }
+    setDisable(newValue.every((val) => val !== ""));
+  };
+  const handleBackspace = (e, index) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      return;
+    }
+    if (e.key === "Backspace" && index > 0 && !e.target.value) {
+      inputsRef.current[index - 1].focus();
+    }
+    setDisable(inputValue.every((val) => val !== ""));
+  };
+  const handleCopyPaste = (e, index) => {
+    e.preventDefault();
+    const copiedOtp = e.clipboardData.getData("text");
+    if (!/^[0-9]+$/.test(copiedOtp)) {
+      return;
+    }
+    const newValue = [...inputValue];
+    let idx = 0;
+    for (let eachNumber of copiedOtp) {
+      const targetIndex = index + idx;
+      if (targetIndex < number) {
+        newValue[targetIndex] = eachNumber;
+        setInputValue(newValue);
+        idx++;
+        if (targetIndex < number - 1) {
+          inputsRef.current[targetIndex + 1].focus();
+          setDisable(true);
+        }
+      }
+    }
+    setDisable(newValue.every((val) => val !== ""));
+  };
+  return (
+    <>
+      <div className="flex justify-center gap-3 mt-10">
+        {Array(number)
+          .fill(0)
+          .map((item, index) => (
+            <input
+              ref={(each) => {
+                inputsRef.current[index] = each;
+              }}
+              type="text"
+              maxLength={1}
+              value={inputValue[index]}
+              className="w-[40px] h-[50px] rounded-md outline-none text-white text-center bg-slate-600 text-2xl focus:outline-none font-extrabold focus:ring-2 focus:ring-blue-500"
+              key={index}
+              onChange={(e) => handleChange(e, index)}
+              onKeyDown={(e) => handleBackspace(e, index)}
+              onPaste={(e) => handleCopyPaste(e, index)}
+              pattern="[0-9]*"
+            />
+          ))}
+      </div>
+      <Button disabled={disable}>Sign in</Button>
+    </>
+  );
+};
 
-    return <div className="flex justify-center">
-        
-        {Array(number).fill(1).map((x, index) => <SubOtpBox reference={(e) => ref.current[index] = e} key={index} onDone={() => {
-            console.log(ref)
-            console.log(index)
-            if (index + 1 >= number) {
-                return
-            }
-            ref.current[index + 1].focus();
-        }} goBack={() => {
-            if (index == 0) {
-                return
-            }
-            ref.current[index - 1].focus();
-        }} />)}
-
-        <br />
-        <Button disabled={disabled}>Sign up</Button>
-    </div>
-}
-
-function SubOtpBox({
-    reference, onDone, goBack
-}) {
-    const [inputBoxVal, setInputBoxVal] = useState("");
-
-    return <div>
-        <input value={inputBoxVal} ref={reference} onKeyUp={(e) => {
-            if (e.key == "Backspace") {
-                goBack()
-            }
-        }} onChange={(e) => {
-            const val = e.target.value
-
-            if (val == "1" || val == "2" || val == "3" || val == "4" || val == "5" || val == "6" || val == "7" || val == "8" || val  == "9") {
-                setInputBoxVal(val);
-                onDone()
-            } else {
-
-            }
-        }} type="text" className="m-1 w-[40px] h-[50px] rounded-xl bg-blue-500 outline-none px-4 text-white"></input>
-    </div>
-}
+export default Otp;
