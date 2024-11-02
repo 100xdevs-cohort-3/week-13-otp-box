@@ -1,5 +1,4 @@
 import "./App.css";
-import { Button } from "./components/Buttons";
 import Otp from "./components/Otp";
 
 function App() {
