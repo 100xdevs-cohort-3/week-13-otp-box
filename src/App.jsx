@@ -8,6 +8,7 @@ function App() {
     <div className='h-screen bg-blue-700'>
       <br/><br/><br/><br/>
       <Otp number={20}/>
+      <br/><br/><br/><br/>
     </div>
   )
 }
