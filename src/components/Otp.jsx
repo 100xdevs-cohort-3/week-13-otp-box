@@ -1,4 +1,4 @@
-import { Button } from "./Buttons";
+import {Button}  from "./Buttons";
 import { useRef, useState } from "react";
 
 // 1, 2, 3, 6, 10
@@ -36,7 +36,11 @@ function SubOtpBox({
     return <div>
         <input value={inputBoxVal} ref={reference} onKeyUp={(e) => {
             if (e.key == "Backspace") {
-                goBack()
+            if (inputBoxVal === "") {
+              goBack();
+            } else {
+              setInputBoxVal("");
+            }
             }
         }} onChange={(e) => {
             const val = e.target.value
