@@ -3,6 +3,7 @@ export default {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}"
   ],
+  darkMode: 'selector',
   theme: {
     extend: {
       colors: {
@@ -14,6 +15,9 @@ export default {
         green: {
           400: "#36c6c0"
         },
+        slate: {
+          200: "#e4e8ee",
+        }
 
       }
     },
